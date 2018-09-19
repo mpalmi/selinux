@@ -12,6 +12,11 @@ LIBVERSION = 2
 LEX = flex
 CIL_GENERATED = $(CILDIR)/src/cil_lexer.c
 
+ifeq ($(DEBUG),1)
+	export CFLAGS = -g3 -O0 -gdwarf-2 -fno-strict-aliasing -Wall -Wshadow -Werror
+	export LDFLAGS = -g
+endif
+
 LIBA=libsepol.a 
 TARGET=libsepol.so
 LIBPC=libsepol.pc
