@@ -110,6 +110,7 @@ extern int sepol_string_to_av_perm(sepol_security_class_t tclass,
 extern int sepol_transition_sid(sepol_security_id_t ssid,	/* IN */
 				sepol_security_id_t tsid,	/* IN */
 				sepol_security_class_t tclass,	/* IN */
+				char *objname,                	/* IN */
 				sepol_security_id_t * out_sid);	/* OUT */
 
 /*
@@ -120,6 +121,7 @@ extern int sepol_transition_sid(sepol_security_id_t ssid,	/* IN */
 extern int sepol_member_sid(sepol_security_id_t ssid,	/* IN */
 			    sepol_security_id_t tsid,	/* IN */
 			    sepol_security_class_t tclass,	/* IN */
+			    char *objname,                	/* IN */
 			    sepol_security_id_t * out_sid);	/* OUT */
 
 /*
@@ -129,6 +131,7 @@ extern int sepol_member_sid(sepol_security_id_t ssid,	/* IN */
 extern int sepol_change_sid(sepol_security_id_t ssid,	/* IN */
 			    sepol_security_id_t tsid,	/* IN */
 			    sepol_security_class_t tclass,	/* IN */
+			    char *objname,                	/* IN */
 			    sepol_security_id_t * out_sid);	/* OUT */
 
 /*
