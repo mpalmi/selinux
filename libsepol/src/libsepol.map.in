@@ -273,6 +273,7 @@ LIBSEPOL_1.1 {
 	sepol_policydb_load_isids;
 	sepol_transition_sid;
 	sepol_set_policydb;
+	sepol_string_to_av_perm;
 } LIBSEPOL_1.0;
 
 LIBSEPOL_3.0 {
