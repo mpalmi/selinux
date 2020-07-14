@@ -39,6 +39,7 @@ struct selinux_status_t
 static struct selinux_status_t *selinux_status = NULL;
 static int			selinux_status_fd;
 static uint32_t			last_seqno;
+static uint32_t			last_policyload;
 
 static uint32_t			fallback_sequence;
 static int			fallback_enforcing;
@@ -116,6 +117,15 @@ int selinux_status_updated(void)
 
 	if (last_seqno != curr_seqno)
 	{
+		if (avc_enforcing != (int) selinux_status->enforcing) {
+			if (avc_process_setenforce(selinux_status->enforcing) < 0)
+				return -1;
+		}
+		if (last_policyload != selinux_status->policyload) {
+			if (avc_process_policyload(selinux_status->policyload) < 0)
+				return -1;
+			last_policyload = selinux_status->policyload;
+		}
 		last_seqno = curr_seqno;
 		result = 1;
 	}
@@ -131,7 +141,6 @@ int selinux_status_updated(void)
 int selinux_status_getenforce(void)
 {
 	uint32_t	seqno;
-	uint32_t	enforcing;
 
 	if (selinux_status == NULL) {
 		errno = EINVAL;
@@ -149,11 +158,11 @@ int selinux_status_getenforce(void)
 	do {
 		seqno = read_sequence(selinux_status);
 
-		enforcing = selinux_status->enforcing;
+		avc_enforcing = selinux_status->enforcing;
 
 	} while (seqno != read_sequence(selinux_status));
 
-	return enforcing ? 1 : 0;
+	return avc_enforcing;
 }
 
 /*
