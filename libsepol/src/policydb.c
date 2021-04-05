@@ -908,6 +908,7 @@ int policydb_init(policydb_t * p)
 		goto err;
 	}
 
+	ebitmap_init(&p->filename_trans_ttypes);
 	ebitmap_init(&p->policycaps);
 	ebitmap_init(&p->permissive_map);
 
@@ -1480,6 +1481,8 @@ void policydb_destroy(policydb_t * p)
 
 	if (!p)
 		return;
+
+	ebitmap_destroy(&p->filename_trans_ttypes);
 
 	ebitmap_destroy(&p->policycaps);
 
@@ -2664,6 +2667,9 @@ int policydb_filetrans_insert(policydb_t *p, uint32_t stype, uint32_t ttype,
 				free(ft);
 				return SEPOL_ENOMEM;
 			}
+
+			if (ebitmap_set_bit(&p->filename_trans_ttypes, key.ttype, 1))
+				return -1;
 		}
 	}
 
@@ -2673,8 +2679,8 @@ int policydb_filetrans_insert(policydb_t *p, uint32_t stype, uint32_t ttype,
 
 static int filename_trans_read_one_compat(policydb_t *p, struct policy_file *fp)
 {
-	uint32_t buf[4], len, stype, ttype, tclass, otype;
 	char *name = NULL;
+	uint32_t buf[4], len, stype, ttype, tclass, otype;
 	int rc;
 
 	rc = next_entry(buf, fp, sizeof(uint32_t));
@@ -2825,7 +2831,7 @@ static int filename_trans_read_one(policydb_t *p, struct policy_file *fp)
 	if (rc)
 		goto err;
 
-	return 0;
+	return ebitmap_set_bit(&p->filename_trans_ttypes, ttype, 1);
 err:
 	free(ft);
 	free(name);
