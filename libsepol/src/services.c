@@ -1376,17 +1376,27 @@ static void filename_compute_type(policydb_t *p, context_struct_t *newcontext,
                   sepol_security_id_t stype, sepol_security_id_t ttype, sepol_security_class_t tclass,
                   char *objname)
 {
-	filename_trans_t ft;
-	filename_trans_datum_t *otype;
+	filename_trans_key_t ft;
+	filename_trans_datum_t *datum;
 
-	ft.stype = stype;
+	if (!ebitmap_get_bit(&policydb->filename_trans_ttypes, ttype))
+	{
+		return;
+	}
+
 	ft.ttype = ttype;
 	ft.tclass = tclass;
 	ft.name = objname;
 
-	otype = hashtab_search(p->filename_trans, (hashtab_key_t)&ft);
-	if (otype) {
-		newcontext->type = otype->otype;
+	datum = hashtab_search(p->filename_trans, (hashtab_key_t)&ft);
+	while (datum)
+	{
+		if (ebitmap_get_bit(&datum->stypes, stype - 1))
+		{
+			newcontext->type = datum->otype;
+			return;
+		}
+		datum = datum->next;
 	}
 }
 

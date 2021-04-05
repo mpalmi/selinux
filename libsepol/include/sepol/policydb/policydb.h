@@ -590,6 +590,9 @@ typedef struct policydb {
 	/* range transitions table (range_trans_key -> mls_range) */
 	hashtab_t range_tr;
 
+	/* quickly exclude lookups when parent ttype has no rules */
+	struct ebitmap filename_trans_ttypes;
+
 	/* file transitions with the last path component */
 	hashtab_t filename_trans;
 	uint32_t filename_trans_count;

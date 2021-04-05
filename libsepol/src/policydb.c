@@ -908,6 +908,7 @@ int policydb_init(policydb_t * p)
 		goto err;
 	}
 
+	ebitmap_init(&p->filename_trans_ttypes);
 	ebitmap_init(&p->policycaps);
 	ebitmap_init(&p->permissive_map);
 
@@ -1480,6 +1481,8 @@ void policydb_destroy(policydb_t * p)
 
 	if (!p)
 		return;
+
+	ebitmap_destroy(&p->filename_trans_ttypes);
 
 	ebitmap_destroy(&p->policycaps);
 
@@ -2825,7 +2828,7 @@ static int filename_trans_read_one(policydb_t *p, struct policy_file *fp)
 	if (rc)
 		goto err;
 
-	return 0;
+	return ebitmap_set_bit(&p->filename_trans_ttypes, ttype, 1);
 err:
 	free(ft);
 	free(name);
