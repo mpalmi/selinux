@@ -28,6 +28,7 @@ LIBSEPOL_1.0 {
 	sepol_bool_set;
 	sepol_bool_set_name;
 	sepol_bool_set_value;
+	sepol_change_sid;
 	sepol_check_context;
 	sepol_context_check;
 	sepol_context_clone;
